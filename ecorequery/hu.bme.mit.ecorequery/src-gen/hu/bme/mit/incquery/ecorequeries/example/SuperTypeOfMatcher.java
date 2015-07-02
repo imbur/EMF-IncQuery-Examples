@@ -14,7 +14,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -44,15 +43,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 @SuppressWarnings("all")
 public class SuperTypeOfMatcher extends BaseMatcher<SuperTypeOfMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<SuperTypeOfMatcher> querySpecification() throws IncQueryException {
-    return SuperTypeOfQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -179,24 +169,6 @@ public class SuperTypeOfMatcher extends BaseMatcher<SuperTypeOfMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pSuper the fixed value of pattern parameter Super, or null if not bound.
-   * @param pSub the fixed value of pattern parameter Sub, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<SuperTypeOfMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final EClass pSuper, final EClass pSub) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pSuper, pSub});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -207,7 +179,6 @@ public class SuperTypeOfMatcher extends BaseMatcher<SuperTypeOfMatch> {
    */
   public SuperTypeOfMatch newMatch(final EClass pSuper, final EClass pSub) {
     return SuperTypeOfMatch.newMatch(pSuper, pSub);
-    
   }
   
   /**
@@ -245,7 +216,10 @@ public class SuperTypeOfMatcher extends BaseMatcher<SuperTypeOfMatch> {
    * 
    */
   public Set<EClass> getAllValuesOfSuper(final EClass pSub) {
-    return rawAccumulateAllValuesOfSuper(new Object[]{null, pSub});
+    return rawAccumulateAllValuesOfSuper(new Object[]{
+    null, 
+    pSub
+    });
   }
   
   /**
@@ -283,39 +257,48 @@ public class SuperTypeOfMatcher extends BaseMatcher<SuperTypeOfMatch> {
    * 
    */
   public Set<EClass> getAllValuesOfSub(final EClass pSuper) {
-    return rawAccumulateAllValuesOfSub(new Object[]{pSuper, null});
+    return rawAccumulateAllValuesOfSub(new Object[]{
+    pSuper, 
+    null
+    });
   }
   
   @Override
   protected SuperTypeOfMatch tupleToMatch(final Tuple t) {
     try {
-      return SuperTypeOfMatch.newMatch((org.eclipse.emf.ecore.EClass) t.get(POSITION_SUPER), (org.eclipse.emf.ecore.EClass) t.get(POSITION_SUB));
+    	return SuperTypeOfMatch.newMatch((org.eclipse.emf.ecore.EClass) t.get(POSITION_SUPER), (org.eclipse.emf.ecore.EClass) t.get(POSITION_SUB));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected SuperTypeOfMatch arrayToMatch(final Object[] match) {
     try {
-      return SuperTypeOfMatch.newMatch((org.eclipse.emf.ecore.EClass) match[POSITION_SUPER], (org.eclipse.emf.ecore.EClass) match[POSITION_SUB]);
+    	return SuperTypeOfMatch.newMatch((org.eclipse.emf.ecore.EClass) match[POSITION_SUPER], (org.eclipse.emf.ecore.EClass) match[POSITION_SUB]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected SuperTypeOfMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return SuperTypeOfMatch.newMutableMatch((org.eclipse.emf.ecore.EClass) match[POSITION_SUPER], (org.eclipse.emf.ecore.EClass) match[POSITION_SUB]);
+    	return SuperTypeOfMatch.newMutableMatch((org.eclipse.emf.ecore.EClass) match[POSITION_SUPER], (org.eclipse.emf.ecore.EClass) match[POSITION_SUB]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<SuperTypeOfMatcher> querySpecification() throws IncQueryException {
+    return SuperTypeOfQuerySpecification.instance();
   }
 }

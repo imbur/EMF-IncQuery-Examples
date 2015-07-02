@@ -13,7 +13,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -41,15 +40,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 @SuppressWarnings("all")
 public class SuperTypeOfNameMatcher extends BaseMatcher<SuperTypeOfNameMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<SuperTypeOfNameMatcher> querySpecification() throws IncQueryException {
-    return SuperTypeOfNameQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -176,24 +166,6 @@ public class SuperTypeOfNameMatcher extends BaseMatcher<SuperTypeOfNameMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pSuperName the fixed value of pattern parameter SuperName, or null if not bound.
-   * @param pSubName the fixed value of pattern parameter SubName, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<SuperTypeOfNameMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final String pSuperName, final String pSubName) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pSuperName, pSubName});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -204,7 +176,6 @@ public class SuperTypeOfNameMatcher extends BaseMatcher<SuperTypeOfNameMatch> {
    */
   public SuperTypeOfNameMatch newMatch(final String pSuperName, final String pSubName) {
     return SuperTypeOfNameMatch.newMatch(pSuperName, pSubName);
-    
   }
   
   /**
@@ -242,7 +213,10 @@ public class SuperTypeOfNameMatcher extends BaseMatcher<SuperTypeOfNameMatch> {
    * 
    */
   public Set<String> getAllValuesOfSuperName(final String pSubName) {
-    return rawAccumulateAllValuesOfSuperName(new Object[]{null, pSubName});
+    return rawAccumulateAllValuesOfSuperName(new Object[]{
+    null, 
+    pSubName
+    });
   }
   
   /**
@@ -280,39 +254,48 @@ public class SuperTypeOfNameMatcher extends BaseMatcher<SuperTypeOfNameMatch> {
    * 
    */
   public Set<String> getAllValuesOfSubName(final String pSuperName) {
-    return rawAccumulateAllValuesOfSubName(new Object[]{pSuperName, null});
+    return rawAccumulateAllValuesOfSubName(new Object[]{
+    pSuperName, 
+    null
+    });
   }
   
   @Override
   protected SuperTypeOfNameMatch tupleToMatch(final Tuple t) {
     try {
-      return SuperTypeOfNameMatch.newMatch((java.lang.String) t.get(POSITION_SUPERNAME), (java.lang.String) t.get(POSITION_SUBNAME));
+    	return SuperTypeOfNameMatch.newMatch((java.lang.String) t.get(POSITION_SUPERNAME), (java.lang.String) t.get(POSITION_SUBNAME));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected SuperTypeOfNameMatch arrayToMatch(final Object[] match) {
     try {
-      return SuperTypeOfNameMatch.newMatch((java.lang.String) match[POSITION_SUPERNAME], (java.lang.String) match[POSITION_SUBNAME]);
+    	return SuperTypeOfNameMatch.newMatch((java.lang.String) match[POSITION_SUPERNAME], (java.lang.String) match[POSITION_SUBNAME]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected SuperTypeOfNameMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return SuperTypeOfNameMatch.newMutableMatch((java.lang.String) match[POSITION_SUPERNAME], (java.lang.String) match[POSITION_SUBNAME]);
+    	return SuperTypeOfNameMatch.newMutableMatch((java.lang.String) match[POSITION_SUPERNAME], (java.lang.String) match[POSITION_SUBNAME]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<SuperTypeOfNameMatcher> querySpecification() throws IncQueryException {
+    return SuperTypeOfNameQuerySpecification.instance();
   }
 }

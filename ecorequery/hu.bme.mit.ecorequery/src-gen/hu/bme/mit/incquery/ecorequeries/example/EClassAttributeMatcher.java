@@ -16,7 +16,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -48,15 +47,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 @SuppressWarnings("all")
 public class EClassAttributeMatcher extends BaseMatcher<EClassAttributeMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<EClassAttributeMatcher> querySpecification() throws IncQueryException {
-    return EClassAttributeQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -191,25 +181,6 @@ public class EClassAttributeMatcher extends BaseMatcher<EClassAttributeMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pE the fixed value of pattern parameter E, or null if not bound.
-   * @param pAttr the fixed value of pattern parameter Attr, or null if not bound.
-   * @param pType the fixed value of pattern parameter Type, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<EClassAttributeMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final EClass pE, final EAttribute pAttr, final EClassifier pType) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pE, pAttr, pType});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -221,7 +192,6 @@ public class EClassAttributeMatcher extends BaseMatcher<EClassAttributeMatch> {
    */
   public EClassAttributeMatch newMatch(final EClass pE, final EAttribute pAttr, final EClassifier pType) {
     return EClassAttributeMatch.newMatch(pE, pAttr, pType);
-    
   }
   
   /**
@@ -259,7 +229,11 @@ public class EClassAttributeMatcher extends BaseMatcher<EClassAttributeMatch> {
    * 
    */
   public Set<EClass> getAllValuesOfE(final EAttribute pAttr, final EClassifier pType) {
-    return rawAccumulateAllValuesOfE(new Object[]{null, pAttr, pType});
+    return rawAccumulateAllValuesOfE(new Object[]{
+    null, 
+    pAttr, 
+    pType
+    });
   }
   
   /**
@@ -297,7 +271,11 @@ public class EClassAttributeMatcher extends BaseMatcher<EClassAttributeMatch> {
    * 
    */
   public Set<EAttribute> getAllValuesOfAttr(final EClass pE, final EClassifier pType) {
-    return rawAccumulateAllValuesOfAttr(new Object[]{pE, null, pType});
+    return rawAccumulateAllValuesOfAttr(new Object[]{
+    pE, 
+    null, 
+    pType
+    });
   }
   
   /**
@@ -335,39 +313,49 @@ public class EClassAttributeMatcher extends BaseMatcher<EClassAttributeMatch> {
    * 
    */
   public Set<EClassifier> getAllValuesOfType(final EClass pE, final EAttribute pAttr) {
-    return rawAccumulateAllValuesOfType(new Object[]{pE, pAttr, null});
+    return rawAccumulateAllValuesOfType(new Object[]{
+    pE, 
+    pAttr, 
+    null
+    });
   }
   
   @Override
   protected EClassAttributeMatch tupleToMatch(final Tuple t) {
     try {
-      return EClassAttributeMatch.newMatch((org.eclipse.emf.ecore.EClass) t.get(POSITION_E), (org.eclipse.emf.ecore.EAttribute) t.get(POSITION_ATTR), (org.eclipse.emf.ecore.EClassifier) t.get(POSITION_TYPE));
+    	return EClassAttributeMatch.newMatch((org.eclipse.emf.ecore.EClass) t.get(POSITION_E), (org.eclipse.emf.ecore.EAttribute) t.get(POSITION_ATTR), (org.eclipse.emf.ecore.EClassifier) t.get(POSITION_TYPE));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected EClassAttributeMatch arrayToMatch(final Object[] match) {
     try {
-      return EClassAttributeMatch.newMatch((org.eclipse.emf.ecore.EClass) match[POSITION_E], (org.eclipse.emf.ecore.EAttribute) match[POSITION_ATTR], (org.eclipse.emf.ecore.EClassifier) match[POSITION_TYPE]);
+    	return EClassAttributeMatch.newMatch((org.eclipse.emf.ecore.EClass) match[POSITION_E], (org.eclipse.emf.ecore.EAttribute) match[POSITION_ATTR], (org.eclipse.emf.ecore.EClassifier) match[POSITION_TYPE]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected EClassAttributeMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return EClassAttributeMatch.newMutableMatch((org.eclipse.emf.ecore.EClass) match[POSITION_E], (org.eclipse.emf.ecore.EAttribute) match[POSITION_ATTR], (org.eclipse.emf.ecore.EClassifier) match[POSITION_TYPE]);
+    	return EClassAttributeMatch.newMutableMatch((org.eclipse.emf.ecore.EClass) match[POSITION_E], (org.eclipse.emf.ecore.EAttribute) match[POSITION_ATTR], (org.eclipse.emf.ecore.EClassifier) match[POSITION_TYPE]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<EClassAttributeMatcher> querySpecification() throws IncQueryException {
+    return EClassAttributeQuerySpecification.instance();
   }
 }

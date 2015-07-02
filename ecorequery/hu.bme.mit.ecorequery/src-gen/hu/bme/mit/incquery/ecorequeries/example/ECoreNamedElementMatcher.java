@@ -14,7 +14,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -44,15 +43,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 @SuppressWarnings("all")
 public class ECoreNamedElementMatcher extends BaseMatcher<ECoreNamedElementMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<ECoreNamedElementMatcher> querySpecification() throws IncQueryException {
-    return ECoreNamedElementQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -179,24 +169,6 @@ public class ECoreNamedElementMatcher extends BaseMatcher<ECoreNamedElementMatch
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pElement the fixed value of pattern parameter Element, or null if not bound.
-   * @param pName the fixed value of pattern parameter Name, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<ECoreNamedElementMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final ENamedElement pElement, final String pName) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pElement, pName});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -207,7 +179,6 @@ public class ECoreNamedElementMatcher extends BaseMatcher<ECoreNamedElementMatch
    */
   public ECoreNamedElementMatch newMatch(final ENamedElement pElement, final String pName) {
     return ECoreNamedElementMatch.newMatch(pElement, pName);
-    
   }
   
   /**
@@ -245,7 +216,10 @@ public class ECoreNamedElementMatcher extends BaseMatcher<ECoreNamedElementMatch
    * 
    */
   public Set<ENamedElement> getAllValuesOfElement(final String pName) {
-    return rawAccumulateAllValuesOfElement(new Object[]{null, pName});
+    return rawAccumulateAllValuesOfElement(new Object[]{
+    null, 
+    pName
+    });
   }
   
   /**
@@ -283,39 +257,48 @@ public class ECoreNamedElementMatcher extends BaseMatcher<ECoreNamedElementMatch
    * 
    */
   public Set<String> getAllValuesOfName(final ENamedElement pElement) {
-    return rawAccumulateAllValuesOfName(new Object[]{pElement, null});
+    return rawAccumulateAllValuesOfName(new Object[]{
+    pElement, 
+    null
+    });
   }
   
   @Override
   protected ECoreNamedElementMatch tupleToMatch(final Tuple t) {
     try {
-      return ECoreNamedElementMatch.newMatch((org.eclipse.emf.ecore.ENamedElement) t.get(POSITION_ELEMENT), (java.lang.String) t.get(POSITION_NAME));
+    	return ECoreNamedElementMatch.newMatch((org.eclipse.emf.ecore.ENamedElement) t.get(POSITION_ELEMENT), (java.lang.String) t.get(POSITION_NAME));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected ECoreNamedElementMatch arrayToMatch(final Object[] match) {
     try {
-      return ECoreNamedElementMatch.newMatch((org.eclipse.emf.ecore.ENamedElement) match[POSITION_ELEMENT], (java.lang.String) match[POSITION_NAME]);
+    	return ECoreNamedElementMatch.newMatch((org.eclipse.emf.ecore.ENamedElement) match[POSITION_ELEMENT], (java.lang.String) match[POSITION_NAME]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected ECoreNamedElementMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return ECoreNamedElementMatch.newMutableMatch((org.eclipse.emf.ecore.ENamedElement) match[POSITION_ELEMENT], (java.lang.String) match[POSITION_NAME]);
+    	return ECoreNamedElementMatch.newMutableMatch((org.eclipse.emf.ecore.ENamedElement) match[POSITION_ELEMENT], (java.lang.String) match[POSITION_NAME]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<ECoreNamedElementMatcher> querySpecification() throws IncQueryException {
+    return ECoreNamedElementQuerySpecification.instance();
   }
 }

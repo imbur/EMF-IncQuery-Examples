@@ -14,7 +14,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -45,15 +44,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 @SuppressWarnings("all")
 public class IsInECoreMatcher extends BaseMatcher<IsInECoreMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<IsInECoreMatcher> querySpecification() throws IncQueryException {
-    return IsInECoreQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -172,23 +162,6 @@ public class IsInECoreMatcher extends BaseMatcher<IsInECoreMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pElement the fixed value of pattern parameter Element, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<IsInECoreMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final EClassifier pElement) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pElement});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -198,7 +171,6 @@ public class IsInECoreMatcher extends BaseMatcher<IsInECoreMatch> {
    */
   public IsInECoreMatch newMatch(final EClassifier pElement) {
     return IsInECoreMatch.newMatch(pElement);
-    
   }
   
   /**
@@ -224,33 +196,39 @@ public class IsInECoreMatcher extends BaseMatcher<IsInECoreMatch> {
   @Override
   protected IsInECoreMatch tupleToMatch(final Tuple t) {
     try {
-      return IsInECoreMatch.newMatch((org.eclipse.emf.ecore.EClassifier) t.get(POSITION_ELEMENT));
+    	return IsInECoreMatch.newMatch((org.eclipse.emf.ecore.EClassifier) t.get(POSITION_ELEMENT));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected IsInECoreMatch arrayToMatch(final Object[] match) {
     try {
-      return IsInECoreMatch.newMatch((org.eclipse.emf.ecore.EClassifier) match[POSITION_ELEMENT]);
+    	return IsInECoreMatch.newMatch((org.eclipse.emf.ecore.EClassifier) match[POSITION_ELEMENT]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected IsInECoreMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return IsInECoreMatch.newMutableMatch((org.eclipse.emf.ecore.EClassifier) match[POSITION_ELEMENT]);
+    	return IsInECoreMatch.newMutableMatch((org.eclipse.emf.ecore.EClassifier) match[POSITION_ELEMENT]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<IsInECoreMatcher> querySpecification() throws IncQueryException {
+    return IsInECoreQuerySpecification.instance();
   }
 }

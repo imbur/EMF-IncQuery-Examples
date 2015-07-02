@@ -14,7 +14,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -45,15 +44,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 @SuppressWarnings("all")
 public class EReferenceWithOneMultiplicityMatcher extends BaseMatcher<EReferenceWithOneMultiplicityMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<EReferenceWithOneMultiplicityMatcher> querySpecification() throws IncQueryException {
-    return EReferenceWithOneMultiplicityQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -172,23 +162,6 @@ public class EReferenceWithOneMultiplicityMatcher extends BaseMatcher<EReference
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pERef the fixed value of pattern parameter ERef, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<EReferenceWithOneMultiplicityMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final EReference pERef) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pERef});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -198,7 +171,6 @@ public class EReferenceWithOneMultiplicityMatcher extends BaseMatcher<EReference
    */
   public EReferenceWithOneMultiplicityMatch newMatch(final EReference pERef) {
     return EReferenceWithOneMultiplicityMatch.newMatch(pERef);
-    
   }
   
   /**
@@ -224,33 +196,39 @@ public class EReferenceWithOneMultiplicityMatcher extends BaseMatcher<EReference
   @Override
   protected EReferenceWithOneMultiplicityMatch tupleToMatch(final Tuple t) {
     try {
-      return EReferenceWithOneMultiplicityMatch.newMatch((org.eclipse.emf.ecore.EReference) t.get(POSITION_EREF));
+    	return EReferenceWithOneMultiplicityMatch.newMatch((org.eclipse.emf.ecore.EReference) t.get(POSITION_EREF));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected EReferenceWithOneMultiplicityMatch arrayToMatch(final Object[] match) {
     try {
-      return EReferenceWithOneMultiplicityMatch.newMatch((org.eclipse.emf.ecore.EReference) match[POSITION_EREF]);
+    	return EReferenceWithOneMultiplicityMatch.newMatch((org.eclipse.emf.ecore.EReference) match[POSITION_EREF]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected EReferenceWithOneMultiplicityMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return EReferenceWithOneMultiplicityMatch.newMutableMatch((org.eclipse.emf.ecore.EReference) match[POSITION_EREF]);
+    	return EReferenceWithOneMultiplicityMatch.newMutableMatch((org.eclipse.emf.ecore.EReference) match[POSITION_EREF]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<EReferenceWithOneMultiplicityMatcher> querySpecification() throws IncQueryException {
+    return EReferenceWithOneMultiplicityQuerySpecification.instance();
   }
 }
